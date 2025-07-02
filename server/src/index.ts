@@ -25,6 +25,7 @@ wss.on("connection", (socket) => {
         if (parsedMessage.type == "chat") {
 
             let currRomm = null;
+            
             //finding current room
             for (let i = 0; i < allSockets.length; i++) {
                 if (allSockets[i].socket == socket) {
@@ -40,8 +41,6 @@ wss.on("connection", (socket) => {
             }
 
         }
-
-
     })
 })
 
