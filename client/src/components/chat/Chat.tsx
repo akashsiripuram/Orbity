@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Send, Users, Paperclip, Smile, MoreVertical } from "lucide-react";
+import { Send } from "lucide-react";
 import { useParams } from "react-router-dom";
 
 export default function Chat() {
@@ -18,7 +18,7 @@ export default function Chat() {
   }, [messages]);
 
   useEffect(() => {
-    const ws = new WebSocket("ws://localhost:8080/");
+    const ws = new WebSocket(import.meta.env.BACKEND_URI);
     wsRef.current = ws;
 
     ws.onopen = () => {
