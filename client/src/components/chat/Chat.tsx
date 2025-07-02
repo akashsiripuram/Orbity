@@ -18,7 +18,7 @@ export default function Chat() {
   }, [messages]);
 
   useEffect(() => {
-    const ws = new WebSocket(import.meta.env.BACKEND_URI);
+    const ws = new WebSocket(import.meta.env.VITE_BACKEND_URI);
     wsRef.current = ws;
 
     ws.onopen = () => {
