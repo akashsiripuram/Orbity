@@ -3,9 +3,11 @@ import { Send } from "lucide-react";
 import { useParams } from "react-router-dom";
 
 export default function Chat() {
-  const [messages, setMessages] = useState<{ name: string; message: string }[]>([]);
+  const [messages, setMessages] = useState<{ name: string; message: string }[]>(
+    []
+  );
   const [message, setMessage] = useState("");
-  const {id,username}=useParams();
+  const { id, username } = useParams();
   const wsRef = useRef<any>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
@@ -55,6 +57,18 @@ export default function Chat() {
     );
     setMessage("");
   };
+  function LeaveRoom(){
+    wsRef.current.send(
+      JSON.stringify({
+        type: "leave",
+        payload: {
+          roomId: id,
+          name: username,
+        },
+      })
+    );
+    window.location.href = "/";
+  }
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -81,11 +95,30 @@ export default function Chat() {
             </div>
             <div>
               <h1 className="text-xl font-bold text-white">Room Id: {id}</h1>
-              
             </div>
           </div>
-          
-          
+          <div>
+            <button
+              className="px-4 py-2 bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white font-semibold rounded-xl shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-400/50 flex items-center space-x-2 group"
+              onClick={LeaveRoom}
+              title="Leave Room"
+            >
+              <svg
+                className="w-5 h-5 mr-1 text-white group-hover:scale-110 transition-transform duration-200"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                />
+              </svg>
+              <span>Leave Room</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -95,28 +128,52 @@ export default function Chat() {
           const isCurrentUser = msg.name === username;
 
           return (
-            <div key={index} className={`flex ${isCurrentUser ? "justify-end" : "justify-start"} animate-in slide-in-from-bottom-2 duration-300`}>
-              <div className={`flex items-end space-x-3 max-w-md ${isCurrentUser ? "flex-row-reverse space-x-reverse" : ""}`}>
+            <div
+              key={index}
+              className={`flex ${
+                isCurrentUser ? "justify-end" : "justify-start"
+              } animate-in slide-in-from-bottom-2 duration-300`}
+            >
+              <div
+                className={`flex items-end space-x-3 max-w-md ${
+                  isCurrentUser ? "flex-row-reverse space-x-reverse" : ""
+                }`}
+              >
                 {!isCurrentUser && (
                   <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-sm font-medium flex-shrink-0">
                     {msg.name[0]?.toUpperCase()}
                   </div>
                 )}
-                
-                <div className={`group relative ${isCurrentUser ? "ml-12" : "mr-12"}`}>
-                  <div className={`px-4 py-3 rounded-2xl shadow-lg backdrop-blur-sm border ${
-                    isCurrentUser 
-                      ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white border-white/10 rounded-br-md" 
-                      : "bg-white/10 text-white border-white/10 rounded-bl-md"
-                  }`}>
+
+                <div
+                  className={`group relative ${
+                    isCurrentUser ? "ml-12" : "mr-12"
+                  }`}
+                >
+                  <div
+                    className={`px-4 py-3 rounded-2xl shadow-lg backdrop-blur-sm border ${
+                      isCurrentUser
+                        ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white border-white/10 rounded-br-md"
+                        : "bg-white/10 text-white border-white/10 rounded-bl-md"
+                    }`}
+                  >
                     {!isCurrentUser && (
-                      <div className="text-xs font-medium text-gray-300 mb-1">{msg.name}</div>
+                      <div className="text-xs font-medium text-gray-300 mb-1">
+                        {msg.name}
+                      </div>
                     )}
                     <p className="text-sm leading-relaxed">{msg.message}</p>
                   </div>
-                  
-                  <div className={`mt-1 text-xs text-gray-500 ${isCurrentUser ? "text-right" : "text-left"}`}>
-                    {new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+
+                  <div
+                    className={`mt-1 text-xs text-gray-500 ${
+                      isCurrentUser ? "text-right" : "text-left"
+                    }`}
+                  >
+                    {new Date().toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
                   </div>
                 </div>
               </div>
@@ -131,8 +188,6 @@ export default function Chat() {
       <div className="relative z-10 bg-black/20 backdrop-blur-xl border-t border-white/5 p-6">
         <div className="bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-sm">
           <div className="flex items-end space-x-4">
-            
-
             <div className="flex-1">
               <textarea
                 value={message}
@@ -145,7 +200,8 @@ export default function Chat() {
                 onInput={(e) => {
                   const target = e.target as HTMLTextAreaElement;
                   target.style.height = "auto";
-                  target.style.height = Math.min(target.scrollHeight, 128) + "px";
+                  target.style.height =
+                    Math.min(target.scrollHeight, 128) + "px";
                 }}
               />
             </div>
@@ -158,8 +214,6 @@ export default function Chat() {
               <Send className="w-5 h-5" />
             </button>
           </div>
-          
-          
         </div>
       </div>
     </div>

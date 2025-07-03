@@ -13,6 +13,7 @@ interface User {
 let allSockets: User[] = [];
 
 wss.on("connection", (socket) => {
+  
   socket.on("message", (message) => {
     //@ts-ignore
     const parsedMessage = JSON.parse(message);
@@ -48,6 +49,12 @@ wss.on("connection", (socket) => {
           );
         }
       }
+    }
+    if (parsedMessage.type == "leave") {
+      //removing user from allSockets
+      allSockets = allSockets.filter(
+        (user) => user.socket !== socket
+      );
     }
   });
 });
